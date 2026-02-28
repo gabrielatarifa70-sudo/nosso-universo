@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gabriela & Vitória 🖤</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background: linear-gradient(to bottom, #0f0f0f, #1a001f);
+    color: white;
+    text-align: center;
+}
+
+header {
+    padding: 40px;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #c77dff;
+}
+
+nav {
+    margin: 20px 0;
+}
+
+nav button {
+    background: #5e0b15;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+section {
+    display: none;
+    padding: 20px;
+}
+
+.active {
+    display: block;
+}
+
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    margin: 10px;
+    border-radius: 15px;
+}
+
+textarea {
+    width: 80%;
+    height: 80px;
+    border-radius: 10px;
+    border: none;
+    padding: 10px;
+}
+
+input, select {
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    margin: 5px;
+}
+
+button.save {
+    background: #c77dff;
+}
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+#login {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #0f0f0f;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#login input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px;
+}
+
+#login button {
+    padding: 8px 15px;
+    border-radius: 10px;
+    border: none;
+    background: #c77dff;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div id="login">
+    <h2>🖤 Área Secreta</h2>
+    <p>Digite a nossa palavra secreta</p>
+    <input type="password" id="senhaInput" placeholder="Palavra secreta">
+    <button onclick="verificarSenha()">Entrar</button>
+    <p id="erroSenha" style="color:red;"></p>
+</div>
+
+<div id="conteudo" style="display:none;">
+<header>
+<h1>Gabriela & Vitória 🖤</h1>
+<p>Entre todos os mundos possíveis, eu escolheria você em todos.</p>
+<p id="contador"></p>
+</header>
+
+<nav>
+<button onclick="show('inicio')">Início</button>
+<button onclick="show('galeria')">Memórias</button>
+<button onclick="show('desabafos')">Desabafos</button>
+<button onclick="show('recados')">Recadinhos</button>
+<button onclick="show('humor')">Humor</button>
+</nav>
+
+<section id="inicio" class="active">
+<div class="card">
+<h2>14/10/2025 🖤</h2>
+<p>O dia em que tudo começou.</p>
+</div>
+</section>
+
+<section id="galeria">
+<div class="card">
+<h2>Nossas Memórias</h2>
+<input type="file" accept="image/*" onchange="addFoto(event)">
+<div id="fotos"></div>
+</div>
+</section>
+
+<section id="desabafos">
+<div class="card">
+<h2>O que eu não digo em voz alta</h2>
+<textarea id="textoDesabafo" placeholder="Escreva aqui..."></textarea><br>
+<button class="save" onclick="salvarDesabafo()">Salvar</button>
+<div id="listaDesabafos"></div>
+</div>
+</section>
+
+<section id="recados">
+<div class="card">
+<h2>Bilhetes que ficam</h2>
+<input type="text" id="recadoInput" placeholder="Escreva um recadinho">
+<button class="save" onclick="salvarRecado()">Adicionar</button>
+<div id="listaRecados"></div>
+</div>
+</section>
+
+<section id="humor">
+<div class="card">
+<h2>Estado do Coração</h2>
+<select id="emojiSelect">
+<option>🖤</option>
+<option>🥺</option>
+<option>🔥</option>
+<option>😴</option>
+<option>😢</option>
+<option>😈</option>
+</select>
+<button class="save" onclick="salvarHumor()">Salvar Humor</button>
+<p id="humorHoje"></p>
+</div>
+</section>
+
+<script>
+function show(id){
+    document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+const dataInicio = new Date("2025-10-14");
+const hoje = new Date();
+const diff = Math.floor((hoje - dataInicio) / (1000 * 60 * 60 * 24));
+document.getElementById("contador").innerText = 
+"Estamos juntas há " + diff + " dias 🖤";
+
+// ---------- DESABAFOS ----------
+function salvarDesabafo(){
+    let texto = document.getElementById("textoDesabafo").value;
+    if(texto){
+        let desabafos = JSON.parse(localStorage.getItem("desabafos")) || [];
+        desabafos.push(new Date().toLocaleDateString() + " - " + texto);
+        localStorage.setItem("desabafos", JSON.stringify(desabafos));
+        document.getElementById("textoDesabafo").value = "";
+        carregarDesabafos();
+    }
+}
+
+function carregarDesabafos(){
+    let lista = document.getElementById("listaDesabafos");
+    lista.innerHTML = "";
+    let desabafos = JSON.parse(localStorage.getItem("desabafos")) || [];
+    desabafos.forEach(d => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerText = d;
+        lista.appendChild(div);
+    });
+}
+
+// ---------- RECADOS ----------
+function salvarRecado(){
+    let texto = document.getElementById("recadoInput").value;
+    if(texto){
+        let recados = JSON.parse(localStorage.getItem("recados")) || [];
+        recados.push("💌 " + texto);
+        localStorage.setItem("recados", JSON.stringify(recados));
+        document.getElementById("recadoInput").value = "";
+        carregarRecados();
+    }
+}
+
+function carregarRecados(){
+    let lista = document.getElementById("listaRecados");
+    lista.innerHTML = "";
+    let recados = JSON.parse(localStorage.getItem("recados")) || [];
+    recados.forEach(r => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerText = r;
+        lista.appendChild(div);
+    });
+}
+
+// ---------- HUMOR ----------
+function salvarHumor(){
+    let emoji = document.getElementById("emojiSelect").value;
+    localStorage.setItem("humor", emoji);
+    carregarHumor();
+}
+
+function carregarHumor(){
+    let emoji = localStorage.getItem("humor");
+    if(emoji){
+        document.getElementById("humorHoje").innerText =
+        "Hoje Vitória está se sentindo " + emoji + ". Vá abraçar imediatamente.";
+    }
+}
+
+// ---------- INICIALIZAÇÃO ----------
+carregarDesabafos();
+carregarRecados();
+carregarHumor();
+// ---------- ESTRELAS ----------
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+
+for (let i = 0; i < 120; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        speed: Math.random() * 0.5
+    });
+}
+
+function drawStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+        }
+    });
+    requestAnimationFrame(drawStars);
+}
+
+drawStars();
+function verificarSenha(){
+    const senhaCorreta = "1410"; // você pode mudar aqui
+    const senhaDigitada = document.getElementById("senhaInput").value;
+
+    if(senhaDigitada === senhaCorreta){
+        document.getElementById("login").style.display = "none";
+        document.getElementById("conteudo").style.display = "block";
+    } else {
+        document.getElementById("erroSenha").innerText = "Senha incorreta 🖤";
+    }
+}
+</script> 
+</div>
+</body>
+</html>
