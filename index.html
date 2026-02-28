@@ -13,6 +13,10 @@ body {
     text-align: center;
 }
 
+#conteudo {
+    position: relative;
+    min-height: 600px;
+}
 header {
     padding: 40px;
 }
@@ -38,13 +42,17 @@ nav button {
 
 section {
     display: none;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
     padding: 20px;
 }
 
-.active {
+section.active {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
-
 .card {
     background: rgba(255,255,255,0.05);
     padding: 15px;
@@ -131,7 +139,12 @@ canvas {
 
 <section id="inicio" class="active">
 <div class="card">
-<h2>14/10/2025 🖤</h2>
+<h2>
+Desde 14/10/2025 💜  
+<br>
+Estamos juntas há  
+<br>
+<span id="contadorTempo"></span></h2>
 <p>O dia em que tudo começou.</p>
 </div>
 </section>
@@ -179,16 +192,51 @@ canvas {
 </section>
 
 <script>
+function calcularTempo() {
+    const inicio = new Date(2025, 9, 14, 0, 0, 0); 
+    const agora = new Date();
+
+    let anos = agora.getFullYear() - inicio.getFullYear();
+    let meses = agora.getMonth() - inicio.getMonth();
+    let dias = agora.getDate() - inicio.getDate();
+
+    if (dias < 0) {
+        meses--;
+        const ultimoMes = new Date(agora.getFullYear(), agora.getMonth(), 0);
+        dias += ultimoMes.getDate();
+    }
+
+    if (meses < 0) {
+        anos--;
+        meses += 12;
+    }
+
+    const horas = agora.getHours();
+    const minutos = agora.getMinutes();
+    const segundos = agora.getSeconds();
+
+    document.getElementById("contadorTempo").innerText =
+        meses + " meses, " +
+        dias + " dias, " +
+        horas + " horas, " +
+        minutos + " minutos e " +
+        segundos + " segundos 🖤";
+}
+
+window.onload = function() {
+    calcularTempo();
+    carregarDesabafos();
+    carregarRecados();
+    carregarHumor();
+};
+
+setInterval(calcularTempo, 1000);
+
 function show(id){
     document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
     document.getElementById(id).classList.add("active");
 }
 
-const dataInicio = new Date("2025-10-14");
-const hoje = new Date();
-const diff = Math.floor((hoje - dataInicio) / (1000 * 60 * 60 * 24));
-document.getElementById("contador").innerText = 
-"Estamos juntas há " + diff + " dias 🖤";
 
 // ---------- DESABAFOS ----------
 function salvarDesabafo(){
@@ -261,13 +309,9 @@ carregarHumor();
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = document.body.scrollHeight;
-}
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
 let stars = [];
 
 for (let i = 0; i < 120; i++) {
@@ -297,18 +341,18 @@ function drawStars() {
 
 drawStars();
 function verificarSenha(){
-    const senhaCorreta = "1410"; // você pode mudar aqui
+    const senhaCorreta = "1410";
     const senhaDigitada = document.getElementById("senhaInput").value;
 
     if(senhaDigitada === senhaCorreta){
         document.getElementById("login").style.display = "none";
         document.getElementById("conteudo").style.display = "block";
+        
+        calcularDias();
     } else {
         document.getElementById("erroSenha").innerText = "Senha incorreta 🖤";
     }
-}
-</script> 
+}</script> 
 </div>
 </body>
-
 </html>
