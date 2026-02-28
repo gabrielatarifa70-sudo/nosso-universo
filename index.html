@@ -261,9 +261,13 @@ carregarHumor();
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = document.body.scrollHeight;
+}
 
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 let stars = [];
 
 for (let i = 0; i < 120; i++) {
@@ -306,4 +310,5 @@ function verificarSenha(){
 </script> 
 </div>
 </body>
+
 </html>
