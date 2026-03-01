@@ -110,6 +110,26 @@ canvas {
     background: #c77dff;
     cursor: pointer;
 }
+.galeria {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.galeria img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.galeria img:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+
+}
 </style>
 </head>
 <body>
@@ -152,11 +172,15 @@ Estamos juntas há
 <section id="galeria">
 <div class="card">
 <h2>Nossas Memórias</h2>
-<input type="file" accept="image/*" onchange="addFoto(event)">
-<div id="fotos"></div>
+
+<div class="galeria">
+    <img src="fotos/foto1.jpg">
+    <img src="fotos/foto2.jpg">
+    <img src="fotos/foto3.jpg">
+</div>
+
 </div>
 </section>
-
 <section id="desabafos">
 <div class="card">
 <h2>O que eu não digo em voz alta</h2>
