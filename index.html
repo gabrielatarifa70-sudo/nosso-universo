@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gabriela & Vitória 🖤</title>
+
 <style>
 body {
     margin: 0;
@@ -13,24 +14,10 @@ body {
     text-align: center;
     overflow-x: hidden;
 }
-
-#conteudo {
-    position: relative;
-    min-height: 600px;
-}
-header {
-    padding: 40px;
-}
-
-h1 {
-    font-size: 2.5em;
-    color: #c77dff;
-}
-
-nav {
-    margin: 20px 0;
-}
-
+#conteudo { position: relative; min-height: 600px; }
+header { padding: 40px; }
+h1 { font-size: 2.5em; color: #c77dff; }
+nav { margin: 20px 0; }
 nav button {
     background: #5e0b15;
     color: white;
@@ -40,7 +27,6 @@ nav button {
     cursor: pointer;
     border-radius: 20px;
 }
-
 section {
     display: none;
     opacity: 0;
@@ -48,7 +34,6 @@ section {
     transition: opacity 0.6s ease, transform 0.6s ease;
     padding: 20px;
 }
-
 section.active {
     display: block;
     opacity: 1;
@@ -60,7 +45,6 @@ section.active {
     margin: 10px;
     border-radius: 15px;
 }
-
 textarea {
     width: 80%;
     height: 80px;
@@ -68,17 +52,13 @@ textarea {
     border: none;
     padding: 10px;
 }
-
 input, select {
     padding: 8px;
     border-radius: 10px;
     border: none;
     margin: 5px;
 }
-
-button.save {
-    background: #c77dff;
-}
+button.save { background: #c77dff; }
 canvas {
     position: fixed;
     top: 0;
@@ -96,57 +76,36 @@ canvas {
     align-items: center;
     z-index: 10;
 }
-
-#login input {
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    margin: 10px;
-}
-
-#login button {
-    padding: 8px 15px;
-    border-radius: 10px;
-    border: none;
-    background: #c77dff;
-    cursor: pointer;
-}
 .galeria {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
 }
-
 .galeria img {
     width: 100%;
     aspect-ratio: 1/1;
     object-fit: cover;
     border-radius: 12px;
-    cursor: pointer;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.galeria img:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
 }
 </style>
 </head>
+
 <body>
+
 <canvas id="stars"></canvas>
+
 <div id="login">
     <h2>🖤 Área Secreta</h2>
-    <p>Digite a nossa palavra secreta</p>
     <input type="password" id="senhaInput" placeholder="Palavra secreta">
     <button onclick="verificarSenha()">Entrar</button>
     <p id="erroSenha" style="color:red;"></p>
 </div>
 
 <div id="conteudo" style="display:none;">
+
 <header>
 <h1>Gabriela & Vitória 🖤</h1>
-<p>Entre todos os mundos possíveis, eu escolheria você em todos.</p>
-<p id="contador"></p>
+<p id="contadorTempo"></p>
 </header>
 
 <nav>
@@ -159,34 +118,19 @@ canvas {
 
 <section id="inicio" class="active">
 <div class="card">
-<h2>
-Desde 14/10/2025 💜  
-<br>
-Estamos juntas há  
-<br>
-<span id="contadorTempo"></span></h2>
-<p>O dia em que tudo começou.</p>
+<h2>Desde 14/10/2025 💜</h2>
+<span id="contadorTempo"></span>
 </div>
 </section>
 
 <section id="galeria">
 <div class="card">
 <h2>Nossas Memórias</h2>
-
 <div class="galeria">
-    <img src="fotos/foto1.jpg">
-    <img src="fotos/foto2.jpg">
-    <img src="fotos/foto3.jpg">
+<img src="fotos/foto1.jpg">
+<img src="fotos/foto2.jpg">
+<img src="fotos/foto3.jpg">
 </div>
-
-</div>
-</section>
-<section id="desabafos">
-<div class="card">
-<h2>O que eu não digo em voz alta</h2>
-<textarea id="textoDesabafo" placeholder="Escreva aqui..."></textarea><br>
-<button class="save" onclick="salvarDesabafo()">Salvar</button>
-<div id="listaDesabafos"></div>
 </div>
 </section>
 
@@ -199,187 +143,68 @@ Estamos juntas há
 </div>
 </section>
 
-<section id="humor">
-<div class="card">
-<h2>Estado do Coração</h2>
-<select id="emojiSelect">
-<option>🖤</option>
-<option>🥺</option>
-<option>🔥</option>
-<option>😴</option>
-<option>😢</option>
-<option>😈</option>
-</select>
-<button class="save" onclick="salvarHumor()">Salvar Humor</button>
-<p id="humorHoje"></p>
 </div>
-</section>
 
 <script>
-function calcularTempo() {
-    const inicio = new Date(2025, 9, 14, 0, 0, 0); 
-    const agora = new Date();
-
-    let anos = agora.getFullYear() - inicio.getFullYear();
-    let meses = agora.getMonth() - inicio.getMonth();
-    let dias = agora.getDate() - inicio.getDate();
-
-    if (dias < 0) {
-        meses--;
-        const ultimoMes = new Date(agora.getFullYear(), agora.getMonth(), 0);
-        dias += ultimoMes.getDate();
-    }
-
-    if (meses < 0) {
-        anos--;
-        meses += 12;
-    }
-
-    const horas = agora.getHours();
-    const minutos = agora.getMinutes();
-    const segundos = agora.getSeconds();
-
-    document.getElementById("contadorTempo").innerText =
-        meses + " meses, " +
-        dias + " dias, " +
-        horas + " horas, " +
-        minutos + " minutos e " +
-        segundos + " segundos 🖤";
-}
-
-window.onload = function() {
-    calcularTempo();
-    carregarDesabafos();
-    carregarRecados();
-    carregarHumor();
-};
-
-setInterval(calcularTempo, 1000);
-
 function show(id){
     document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
     document.getElementById(id).classList.add("active");
 }
 
-
-// ---------- DESABAFOS ----------
-function salvarDesabafo(){
-    let texto = document.getElementById("textoDesabafo").value;
-    if(texto){
-        let desabafos = JSON.parse(localStorage.getItem("desabafos")) || [];
-        desabafos.push(new Date().toLocaleDateString() + " - " + texto);
-        localStorage.setItem("desabafos", JSON.stringify(desabafos));
-        document.getElementById("textoDesabafo").value = "";
-        carregarDesabafos();
-    }
-}
-
-function carregarDesabafos(){
-    let lista = document.getElementById("listaDesabafos");
-    lista.innerHTML = "";
-    let desabafos = JSON.parse(localStorage.getItem("desabafos")) || [];
-    desabafos.forEach(d => {
-        let div = document.createElement("div");
-        div.className = "card";
-        div.innerText = d;
-        lista.appendChild(div);
-    });
-}
-
-// ---------- RECADOS ----------
-function salvarRecado(){
-    let texto = document.getElementById("recadoInput").value;
-    if(texto){
-        let recados = JSON.parse(localStorage.getItem("recados")) || [];
-        recados.push("💌 " + texto);
-        localStorage.setItem("recados", JSON.stringify(recados));
-        document.getElementById("recadoInput").value = "";
-        carregarRecados();
-    }
-}
-
-function carregarRecados(){
-    let lista = document.getElementById("listaRecados");
-    lista.innerHTML = "";
-    let recados = JSON.parse(localStorage.getItem("recados")) || [];
-    recados.forEach(r => {
-        let div = document.createElement("div");
-        div.className = "card";
-        div.innerText = r;
-        lista.appendChild(div);
-    });
-}
-
-// ---------- HUMOR ----------
-function salvarHumor(){
-    let emoji = document.getElementById("emojiSelect").value;
-    localStorage.setItem("humor", emoji);
-    carregarHumor();
-}
-
-function carregarHumor(){
-    let emoji = localStorage.getItem("humor");
-    if(emoji){
-        document.getElementById("humorHoje").innerText =
-        "Hoje Vitória está se sentindo " + emoji + ". Vá abraçar imediatamente.";
-    }
-}
-
-// ---------- INICIALIZAÇÃO ----------
-carregarDesabafos();
-carregarRecados();
-carregarHumor();
-// ---------- ESTRELAS ----------
-const canvas = document.getElementById("stars");
-const ctx = canvas.getContext("2d");
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-window.addEventListener("resize", function() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
-
-let stars = [];
-
-for (let i = 0; i < 120; i++) {
-    stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.5,
-        speed: Math.random() * 0.5
-    });
-}
-
-function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "white";
-    stars.forEach(star => {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-        ctx.fill();
-        star.y += star.speed;
-        if (star.y > canvas.height) {
-            star.y = 0;
-            star.x = Math.random() * canvas.width;
-        }
-    });
-    requestAnimationFrame(drawStars);
-}
-
-drawStars();
 function verificarSenha(){
-    const senhaCorreta = "1410";
-    const senhaDigitada = document.getElementById("senhaInput").value;
-
-    if(senhaDigitada === senhaCorreta){
+    if(document.getElementById("senhaInput").value === "1410"){
         document.getElementById("login").style.display = "none";
         document.getElementById("conteudo").style.display = "block";
-        
     } else {
         document.getElementById("erroSenha").innerText = "Senha incorreta 🖤";
     }
-}</script> 
-</div>
+}
+</script>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy }
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAcTkEQd4hysYz9X1gvT1AVrfBfDjo1W3U",
+authDomain: "nosso-universo-a50d4.firebaseapp.com",
+projectId: "nosso-universo-a50d4",
+storageBucket: "nosso-universo-a50d4.firebasestorage.app",
+messagingSenderId: "798462200813",
+appId: "1:798462200813:web:a2232402a35752d3d8f5e4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.salvarRecado = async function() {
+const texto = document.getElementById("recadoInput").value;
+if (!texto) return;
+
+await addDoc(collection(db, "recados"), {
+texto: texto,
+criadoEm: new Date()
+});
+
+document.getElementById("recadoInput").value = "";
+};
+
+const q = query(collection(db, "recados"), orderBy("criadoEm"));
+
+onSnapshot(q, (snapshot) => {
+const lista = document.getElementById("listaRecados");
+lista.innerHTML = "";
+
+snapshot.forEach((doc) => {
+const div = document.createElement("div");
+div.className = "card";
+div.innerText = "💌 " + doc.data().texto;
+lista.appendChild(div);
+});
+});
+</script>
+
 </body>
 </html>
