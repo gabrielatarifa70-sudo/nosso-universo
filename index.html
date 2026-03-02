@@ -11,6 +11,7 @@ body {
     background: linear-gradient(to bottom, #0f0f0f, #1a001f);
     color: white;
     text-align: center;
+    overflow-x: hidden;
 }
 
 #conteudo {
@@ -113,7 +114,7 @@ canvas {
 .galeria {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 4px;
 }
 
 .galeria img {
@@ -128,7 +129,6 @@ canvas {
 .galeria img:hover {
     transform: scale(1.05);
     opacity: 0.9;
-
 }
 </style>
 </head>
@@ -335,6 +335,10 @@ const ctx = canvas.getContext("2d");
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+window.addEventListener("resize", function() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
 
 let stars = [];
 
@@ -372,7 +376,6 @@ function verificarSenha(){
         document.getElementById("login").style.display = "none";
         document.getElementById("conteudo").style.display = "block";
         
-        calcularDias();
     } else {
         document.getElementById("erroSenha").innerText = "Senha incorreta 🖤";
     }
