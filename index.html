@@ -46,29 +46,11 @@ section.active { display: block; opacity: 1; transform: translateY(0); }
     border-radius: 15px;
 }
 
-textarea {
-    width: 80%;
-    height: 80px;
-    border-radius: 10px;
-    border: none;
-    padding: 10px;
-}
-
-input, select {
-    padding: 8px;
-    border-radius: 10px;
-    border: none;
-    margin: 5px;
-}
-
+textarea { width: 80%; height: 80px; border-radius: 10px; border: none; padding: 10px; }
+input, select { padding: 8px; border-radius: 10px; border: none; margin: 5px; }
 button.save { background: #c77dff; }
 
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
-}
+canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
 #login {
     position: fixed;
@@ -81,28 +63,10 @@ canvas {
     align-items: center;
     z-index: 10;
 }
+#login input { padding: 10px; border-radius: 10px; border: none; margin: 10px; }
+#login button { padding: 8px 15px; border-radius: 10px; border: none; background: #c77dff; cursor: pointer; }
 
-#login input {
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    margin: 10px;
-}
-
-#login button {
-    padding: 8px 15px;
-    border-radius: 10px;
-    border: none;
-    background: #c77dff;
-    cursor: pointer;
-}
-
-.galeria {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-}
-
+.galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
 .galeria img {
     width: 100%;
     aspect-ratio: 1/1;
@@ -111,11 +75,7 @@ canvas {
     cursor: pointer;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
-
-.galeria img:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
+.galeria img:hover { transform: scale(1.05); opacity: 0.9; }
 </style>
 </head>
 
@@ -125,7 +85,7 @@ canvas {
 <div id="login">
     <h2>🖤 Área Secreta</h2>
     <p>Digite a nossa palavra secreta</p>
-    <input type="password" id="senhaInput" placeholder="Palavra secreta">
+    <input type="password" id="senhaInput">
     <button onclick="verificarSenha()">Entrar</button>
     <p id="erroSenha" style="color:red;"></p>
 </div>
@@ -205,12 +165,26 @@ Desde 14/10/2025 💜
 
 <script>
 function calcularTempo(){
-    const inicio = new Date(2025,9,14);
+    const inicio = new Date(2025,9,14,0,0,0);
     const agora = new Date();
-    const diff = agora - inicio;
-    const dias = Math.floor(diff/(1000*60*60*24));
+
+    let meses = agora.getMonth() - inicio.getMonth() +
+        12 * (agora.getFullYear() - inicio.getFullYear());
+
+    let dias = agora.getDate() - inicio.getDate();
+    if(dias < 0){
+        meses--;
+        const ultimoMes = new Date(agora.getFullYear(), agora.getMonth(), 0);
+        dias += ultimoMes.getDate();
+    }
+
+    const horas = agora.getHours();
+    const minutos = agora.getMinutes();
+    const segundos = agora.getSeconds();
+
     document.getElementById("contadorTempo").innerText =
-        dias + " dias 🖤";
+        meses+" meses, "+dias+" dias, "+horas+" horas, "+
+        minutos+" minutos e "+segundos+" segundos 🖤";
 }
 
 setInterval(calcularTempo,1000);
@@ -229,6 +203,37 @@ function verificarSenha(){
         document.getElementById("erroSenha").innerText="Senha incorreta 🖤";
     }
 }
+
+/* estrelas mantidas */
+const canvas=document.getElementById("stars");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let stars=[];
+for(let i=0;i<120;i++){
+    stars.push({x:Math.random()*canvas.width,
+                y:Math.random()*canvas.height,
+                radius:Math.random()*1.5,
+                speed:Math.random()*0.5});
+}
+
+function drawStars(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="white";
+    stars.forEach(star=>{
+        ctx.beginPath();
+        ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
+        ctx.fill();
+        star.y+=star.speed;
+        if(star.y>canvas.height){
+            star.y=0;
+            star.x=Math.random()*canvas.width;
+        }
+    });
+    requestAnimationFrame(drawStars);
+}
+drawStars();
 </script>
 
 <script type="module">
@@ -239,10 +244,7 @@ from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyAcTkEQd4hysYz9X1gvT1AVrfBfDjo1W3U",
   authDomain: "nosso-universo-a50d4.firebaseapp.com",
-  projectId: "nosso-universo-a50d4",
-  storageBucket: "nosso-universo-a50d4.firebasestorage.app",
-  messagingSenderId: "798462200813",
-  appId: "1:798462200813:web:a2232402a35752d3d8f5e4"
+  projectId: "nosso-universo-a50d4"
 };
 
 const app = initializeApp(firebaseConfig);
