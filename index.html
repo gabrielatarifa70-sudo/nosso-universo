@@ -238,7 +238,7 @@ drawStars();
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot } 
+import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -292,18 +292,26 @@ onSnapshot(collection(db,"desabafos"),snap=>{
   });
 });
 
+import { doc, setDoc, getDoc } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+// -------- HUMOR --------
 window.salvarHumor = async function(){
-  const emoji=document.getElementById("emojiSelect").value;
-  await addDoc(collection(db,"humor"),{nome,emoji});
+  const emoji = document.getElementById("emojiSelect").value;
+
+  await setDoc(doc(db, "humor", nome), {
+    emoji: emoji
+  });
 };
 
-onSnapshot(collection(db,"humor"),snap=>{
-  let ultimo=null;
-  snap.forEach(doc=>ultimo=doc.data());
-  if(ultimo){
-    document.getElementById("humorHoje").innerText=
-      ultimo.nome+" está se sentindo "+ultimo.emoji+" 🖤";
-  }
+onSnapshot(collection(db, "humor"), (snapshot) => {
+  let textoFinal = "";
+
+  snapshot.forEach((docItem) => {
+    textoFinal += docItem.id + " está se sentindo " + docItem.data().emoji + " 🖤\n";
+  });
+
+  document.getElementById("humorHoje").innerText = textoFinal;
 });
 </script>
 
