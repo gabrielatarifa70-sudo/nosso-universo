@@ -34,37 +34,24 @@ section {
     transition: opacity 0.6s ease, transform 0.6s ease;
     padding: 20px;
 }
-section.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
+section.active { display: block; opacity: 1; transform: translateY(0); }
 .card {
     background: rgba(255,255,255,0.05);
     padding: 15px;
     margin: 10px;
     border-radius: 15px;
 }
-textarea {
-    width: 80%;
-    height: 80px;
-    border-radius: 10px;
-    border: none;
-    padding: 10px;
-}
-input, select {
+textarea, input, select {
     padding: 8px;
     border-radius: 10px;
     border: none;
     margin: 5px;
 }
-button.save { background: #c77dff; }
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
-}
+textarea { width: 80%; height: 80px; }
+button.save { background: #c77dff; color: white; }
+canvas { position: fixed; top: 0; left: 0; z-index: -1; }
+.galeria { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; }
+.galeria img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 12px; }
 #login {
     position: fixed;
     width: 100%;
@@ -74,18 +61,6 @@ canvas {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 10;
-}
-.galeria {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-}
-.galeria img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    border-radius: 12px;
 }
 </style>
 </head>
@@ -105,7 +80,7 @@ canvas {
 
 <header>
 <h1>Gabriela & Vitória 🖤</h1>
-<p id="contadorTempo"></p>
+<p>Entre todos os mundos possíveis, eu escolheria você em todos.</p>
 </header>
 
 <nav>
@@ -134,12 +109,37 @@ canvas {
 </div>
 </section>
 
+<section id="desabafos">
+<div class="card">
+<h2>O que eu não digo em voz alta</h2>
+<textarea id="textoDesabafo"></textarea><br>
+<button class="save" onclick="salvarDesabafo()">Salvar</button>
+<div id="listaDesabafos"></div>
+</div>
+</section>
+
 <section id="recados">
 <div class="card">
 <h2>Bilhetes que ficam</h2>
-<input type="text" id="recadoInput" placeholder="Escreva um recadinho">
+<input type="text" id="recadoInput">
 <button class="save" onclick="salvarRecado()">Adicionar</button>
 <div id="listaRecados"></div>
+</div>
+</section>
+
+<section id="humor">
+<div class="card">
+<h2>Estado do Coração</h2>
+<select id="emojiSelect">
+<option>🖤</option>
+<option>🥺</option>
+<option>🔥</option>
+<option>😴</option>
+<option>😢</option>
+<option>😈</option>
+</select>
+<button class="save" onclick="salvarHumor()">Salvar</button>
+<p id="humorHoje"></p>
 </div>
 </section>
 
@@ -159,9 +159,18 @@ function verificarSenha(){
         document.getElementById("erroSenha").innerText = "Senha incorreta 🖤";
     }
 }
+
+function calcularTempo(){
+    const inicio = new Date(2025,9,14);
+    const agora = new Date();
+    const diff = agora - inicio;
+    const dias = Math.floor(diff / (1000*60*60*24));
+    document.getElementById("contadorTempo").innerText = dias + " dias juntas 🖤";
+}
+setInterval(calcularTempo,1000);
+calcularTempo();
 </script>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, query, orderBy }
@@ -179,30 +188,60 @@ appId: "1:798462200813:web:a2232402a35752d3d8f5e4"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-window.salvarRecado = async function() {
+// RECADOS
+window.salvarRecado = async function(){
 const texto = document.getElementById("recadoInput").value;
-if (!texto) return;
-
-await addDoc(collection(db, "recados"), {
-texto: texto,
-criadoEm: new Date()
-});
-
-document.getElementById("recadoInput").value = "";
+if(!texto) return;
+await addDoc(collection(db,"recados"),{texto, criadoEm:new Date()});
+document.getElementById("recadoInput").value="";
 };
 
-const q = query(collection(db, "recados"), orderBy("criadoEm"));
-
-onSnapshot(q, (snapshot) => {
-const lista = document.getElementById("listaRecados");
-lista.innerHTML = "";
-
-snapshot.forEach((doc) => {
-const div = document.createElement("div");
-div.className = "card";
-div.innerText = "💌 " + doc.data().texto;
+onSnapshot(query(collection(db,"recados"),orderBy("criadoEm")),
+(snapshot)=>{
+const lista=document.getElementById("listaRecados");
+lista.innerHTML="";
+snapshot.forEach(doc=>{
+const div=document.createElement("div");
+div.className="card";
+div.innerText="💌 "+doc.data().texto;
 lista.appendChild(div);
 });
+});
+
+// DESABAFOS
+window.salvarDesabafo = async function(){
+const texto=document.getElementById("textoDesabafo").value;
+if(!texto) return;
+await addDoc(collection(db,"desabafos"),{texto, criadoEm:new Date()});
+document.getElementById("textoDesabafo").value="";
+};
+
+onSnapshot(query(collection(db,"desabafos"),orderBy("criadoEm")),
+(snapshot)=>{
+const lista=document.getElementById("listaDesabafos");
+lista.innerHTML="";
+snapshot.forEach(doc=>{
+const div=document.createElement("div");
+div.className="card";
+div.innerText=doc.data().texto;
+lista.appendChild(div);
+});
+});
+
+// HUMOR
+window.salvarHumor = async function(){
+const emoji=document.getElementById("emojiSelect").value;
+await addDoc(collection(db,"humor"),{emoji, criadoEm:new Date()});
+};
+
+onSnapshot(query(collection(db,"humor"),orderBy("criadoEm")),
+(snapshot)=>{
+let ultimo=null;
+snapshot.forEach(doc=>ultimo=doc.data().emoji);
+if(ultimo){
+document.getElementById("humorHoje").innerText=
+"Hoje Vitória está se sentindo "+ultimo+" 🖤";
+}
 });
 </script>
 
