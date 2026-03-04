@@ -305,7 +305,7 @@ onSnapshot(collection(db, "humor"), (snapshot) => {
   let textoFinal = "";
 
   snapshot.forEach((docItem) => {
-    textoFinal += docItem.id + " está se sentindo " + docItem.data().emoji + " 🖤\n";
+   textoFinal += "💭 " + docItem.id + " está se sentindo " + docItem.data().emoji + "\n";
   });
 
   document.getElementById("humorHoje").innerText = textoFinal;
