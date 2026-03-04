@@ -251,11 +251,17 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let nome = localStorage.getItem("nomeUsuario");
-if(!nome){
-  nome = prompt("Quem está entrando? (Gabriela ou Vitória)");
-  localStorage.setItem("nomeUsuario", nome);
-}
 
+if (!nome || nome === "null") {
+  nome = prompt("Quem está entrando? (Gabriela ou Vitória)");
+
+  if (!nome || nome.trim() === "") {
+    alert("Você precisa dizer quem é 💜");
+    location.reload();
+  } else {
+    localStorage.setItem("nomeUsuario", nome);
+  }
+}
 window.salvarRecado = async function(){
   const texto=document.getElementById("recadoInput").value.trim();
   if(!texto) return;
